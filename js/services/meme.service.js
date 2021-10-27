@@ -38,9 +38,10 @@ function getImgById(id) {
 // Add line
 
 function addLine() {
-	let x, y;
-	// if (gMeme.selectedLineIdx === 1) {
-	// }
+	let pos;
+	if (gMeme.selectedLineIdx === 1) {
+		pos = {};
+	}
 	gMeme.lines.push(_createLine());
 	// Updating the Selected line
 	gMeme.selectedLineIdx++;
@@ -114,6 +115,7 @@ function getImgs() {
 }
 
 function getMemeFont() {
+	console.log(gMeme);
 	const { fontFam, size } = gMeme.lines[gMeme.selectedLineIdx];
 	return `bold ${size}px ${fontFam}`;
 }
