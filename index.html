@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script
+			type="module"
+			src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+		></script>
+		<script
+			nomodule
+			src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+		></script>
+
+		<script defer src="js/services/storage.service.js"></script>
+		<script defer src="js/services/util.service.js"></script>
+		<script defer src="js/services/meme.service.js"></script>
+		<script defer src="js/main.js"></script>
+		<link rel="stylesheet" href="css/style.css" />
+		<title>Meme</title>
+	</head>
+	<body>
+		<!-- header -->
+		<header class="main-header flex align-center space-between">
+			<h1>Memegen</h1>
+			<nav class="main-nav">
+				<ul class="clean-list flex align-center">
+					<li><a href="#" class="link active">Gallery</a></li>
+					<li><a href="#" class="link">Memes</a></li>
+					<li><a href="#" class="link">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main class="main-content">
+			<section class="gallery-section-container hidden">
+				<section class="serch-section flex space-between">
+					<input
+						list="image-keywords"
+						id="keyword-choice"
+						name="keyword-choice"
+					/>
+
+					<datalist id="image-keywords"> </datalist>
+					<div class="sort-btns-container"></div>
+				</section>
+				<section class="images-section main-layout">
+					<div
+						class="images-container grid column-layout"
+						data-columns="1,1,1,1"
+					>
+						<div class="img-item"></div>
+					</div>
+				</section>
+			</section>
+			<section
+				class="meme-editor-section flex align-center space-between main-layout"
+			>
+				<div class="canvas-container">
+					<canvas
+						id="canvas"
+						width="400"
+						height="400"
+						style="outline: 1px solid green"
+					></canvas>
+				</div>
+				<div class="editor-tools-container flex column">
+					<div class="control-box">
+						<input
+							type="text"
+							name="text"
+							id="text"
+							placeholder="Loren ipsum"
+							class="input-text-meme input"
+						/>
+
+						<div class="form-row flex align-center">
+							<button name="delete" class="btn flex align-center">
+								<ion-icon name="trash-outline"></ion-icon>
+							</button>
+							<button name="add" class="btn flex align-center">
+								<ion-icon name="add-outline"></ion-icon>
+							</button>
+							<button name="switch" class="btn flex align-center">
+								<ion-icon name="swap-vertical-outline"></ion-icon>
+							</button>
+						</div>
+						<div class="form-row flex align-center">
+							<button name="increase" class="btn flex align-center">+</button>
+							<button name="decrease" class="btn flex align-center">-</button>
+						</div>
+
+						<!-- font style -->
+						<div class="form-row flex align-center">
+							<label for="color" name="stroke">Stroke </label>
+							<input type="color" name="stroke" id="stroke" value="#ffffff" />
+							<label for="color" name="fill">Fill </label>
+							<input type="color" name="fill" id="fill" value="#111111" />
+							<select>
+								<option value="impact" selected>Impact</option>
+							</select>
+						</div>
+					</div>
+
+					<button class="btn btn-orange">Share</button>
+				</div>
+			</section>
+		</main>
+
+		<footer class="main-footer flex column align-center">
+			<div class="logo-box"><h2>memegen</h2></div>
+			<p>All right reserved © <span class="year">2021</span></p>
+		</footer>
+	</body>
+</html>
