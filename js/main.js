@@ -1,32 +1,38 @@
-'use strict';
-
 // Selectors
 
 let gElImageItems;
 let gElCanvas;
 let gCtx;
-
-// Event listeners
+let gTxtInput;
 
 // LOAD
 
 window.addEventListener('load', function () {
 	gElCanvas = document.querySelector('#canvas');
 	gCtx = gElCanvas.getContext('2d');
+	gTxtInput = document.querySelector('input[name="txt"]');
 
 	// Rendering the images
-	// renderGallery();
+	renderGallery();
 
-	// const elSortBtnsCont = document.querySelector('.sort-btns-container');
+	// Show gallery
 
-	// elSortBtnsCont.addEventListener('click', onSortImgs);
+	document
+		.querySelector('.gallery-btn')
+		.addEventListener('click', toggleGallery);
 
-	// // Selects all image items
-	// const elImgsContainer = document.querySelector('.images-container');
-	// // Click on  image
-	// elImgsContainer.addEventListener('click', onCreateImgMeme);
+	document.querySelector('.memes-btn').addEventListener('click', toggleGallery);
 
-	renderImgCanvas(createImgMeme(1));
+	const elSortBtnsCont = document.querySelector('.sort-btns-container');
+
+	elSortBtnsCont.addEventListener('click', onSortImgs);
+
+	// Selects all image items
+	const elImgsContainer = document.querySelector('.images-container');
+	// Click on  image
+	elImgsContainer.addEventListener('click', onCreateImgMeme);
+
+	// renderImgCanvas(createImgMeme(1));
 
 	// Updating the values from the inputs
 
@@ -64,41 +70,100 @@ function onCreateImgMeme(e) {
 // Edit the meme
 
 function onUpdateValues(e) {
-	// clearCanvas();
 	const elInputs = document.querySelectorAll('.control-box input');
-	console.log(getInputsValues(elInputs));
+	const inputsVals = getInputsValues(elInputs);
+	updateValues(inputsVals);
 
-	const fillVal = document.querySelector('input[name="fill"]').value;
-	const strokeVal = document.querySelector('input[name="stroke"]').value;
-	const txtVal = document.querySelector('input[name="text"]').value;
-
-	updateValues(fillVal, strokeVal, txtVal);
-
-	gCtx.fillStyle = fillVal;
-	gCtx.strokeStyle = strokeVal;
-	gCtx.font = getMemeFont();
-	// bold 16px Arial";
-	// const { x, y } = calcHight();
-	const fontS = gMeme.lines[gMeme.selectedLineIdx].size;
-
-	gCtx.fillText(txtVal, 10, 10 + fontS);
+	renderCanvas();
 }
 
 function onEditClick(e) {
-	const val = e.target.value;
+	const val = e.target.closest('.btn').name;
 	if (val === 'decrease' || val === 'increase') {
 		updateFontSize(val === 'increase' ? -1 : 1);
+	} else if (val === 'delete') {
+		inputTxt();
+		deleteLine();
+	} else if (val === 'add') {
+		if (!gTxtInput.value) return;
+		const elInputs = document.querySelectorAll('.control-box input');
+		const inputsVals = getInputsValues(elInputs);
+		inputTxt();
+		addLine(inputsVals);
+	} else if (val === 'swap') {
+		inputTxt(toNextLine().txt);
 	}
+	renderCanvas();
 }
-// function onAddLine() {
-// addLine()
-// }
 
-// add image
+// render image canvas
 
-function onAddImg() {}
+function renderImgCanvas(curImg) {
+	const img = new Image();
+	img.src = `meme-imgs/${curImg.url}`;
+	img.onload = () => {
+		gCtx.drawImage(img, 0, 0, gElCanvas.width, gElCanvas.height);
+		renderTexts();
+	};
+}
 
-// Sort images
+function resizeCanvas() {
+	const elContainer = document.querySelector('.canvas-container');
+	gElCanvas.width = elContainer.offsetWidth;
+	gElCanvas.height = elContainer.offsetHeight;
+}
+
+// render canvas
+
+function renderCanvas() {
+	gCtx.save();
+	renderImgCanvas(getCurImg());
+	gCtx.restore();
+}
+
+// render text
+
+function renderTexts() {
+	let meme = getMeme();
+	meme.lines.forEach((line) => drawText(line));
+}
+
+// draw text
+
+function drawText(line) {
+	gCtx.beginPath();
+	console.log(line);
+	gCtx.fillStyle = line.fill;
+
+	gCtx.strokeStyle = line.stroke;
+
+	gCtx.font = `${line.size}px ${line.fontFam}`;
+
+	gCtx.fillText(line.txt, line.pos.x, line.pos.y + line.size);
+	gCtx.strokeText(line.txt, line.pos.x, line.pos.y + line.size);
+}
+
+// Toggle Gallery
+
+function toggleGallery(e) {
+	if (e && e.target.classList.contains('active')) return;
+	document
+		.querySelectorAll('.main-nav .link')
+		.forEach((link) => link.classList.remove('active'));
+	if (e) e.target.classList.add('active');
+	else document.querySelector('.memes-btn').classList.add('active');
+
+	document
+		.querySelector('.gallery-section-container')
+		.classList.toggle('hidden');
+	document.querySelector('.meme-editor-section').classList.toggle('hidden');
+}
+
+// Clear
+
+function inputTxt(txt = '') {
+	document.querySelector('input[name="txt"]').value = txt;
+}
 
 // GALLERY
 
@@ -155,45 +220,14 @@ function renderImg(img) {
 	elImgsContainer.insertAdjacentHTML('beforeend', strHtml);
 }
 
-// render image canvas
-
-function renderImgCanvas(curImg) {
-	const img = new Image();
-	img.src = `meme-imgs/${curImg.url}`;
-	img.onload = () => {
-		gCtx.drawImage(img, 0, 0, gElCanvas.width, gElCanvas.height); //img,x,y,xend,yend
-	};
-}
-
-// Clear canvas
-
-function clearCanvas() {
-	gCtx.clearRect(0, 0, gElCanvas.width, gElCanvas.height);
-}
-
-// Toggle Gallery
-
-function toggleGallery() {
-	document
-		.querySelector('.gallery-section-container')
-		.classList.toggle('hidden');
-	document.querySelector('.meme-editor-section').classList.toggle('hidden');
-}
-
-// Calc hight
-
-// function calcHight() {
+// function calcNextLinePos() {
+// 	let pos;
 // 	const [width, hight] = [gElCanvas.width, gElCanvas.height];
-// 	const fontS = gMeme.lines[gMeme.selectedLineIdx].size;
-// 	return 10
+// 	const lines = getMeme().lines;
+// 	if (lines.length === 1) {
+// 		pos = {};
+// 	}
 // }
-
-function resizeCanvas() {
-	const elContainer = document.querySelector('.canvas-container');
-	gElCanvas.width = elContainer.offsetWidth;
-	gElCanvas.height = elContainer.offsetHeight;
-}
-
 function getEvPos(ev) {
 	var pos = {
 		x: ev.offsetX,

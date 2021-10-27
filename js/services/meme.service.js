@@ -9,9 +9,10 @@ let gSortBy = 'all';
 let gIdCount = 1;
 
 let gKeyWords = {};
+
 let gImgs;
 _createImgs();
-
+let gCurImg;
 const gLineHight = '16px';
 
 let gMeme = {};
@@ -23,10 +24,10 @@ function updateSortBy(sortBy) {
 }
 
 function createImgMeme(imgId) {
-	let img = getImgById(imgId);
+	gCurImg = getImgById(imgId);
 
 	gMeme = _createMeme(imgId);
-	return img;
+	return gCurImg;
 }
 
 // Add image
@@ -35,30 +36,44 @@ function getImgById(id) {
 	return gImgs.find((img) => img.id === +id);
 }
 
+// Go to the next line
+
+function toNextLine() {
+	gMeme.selectedLineIdx++;
+	if (gMeme.selectedLineIdx >= gMeme.lines.length) gMeme.selectedLineIdx = 0;
+
+	return gMeme.lines[gMeme.selectedLineIdx];
+}
+
 // Add line
 
-function addLine() {
-	let pos;
-	if (gMeme.selectedLineIdx === 1) {
-		pos = {};
-	}
-	gMeme.lines.push(_createLine());
+function addLine(vals) {
+	let pos = gMeme.lines[gMeme.selectedLineIdx].pos;
+
+	// if (gMeme.selectedLineIdx === 1) {}
+	gMeme.lines.push(_createLine({ x: pos.x + 10, y: pos.y + 10 }));
+
+	updateValues(vals);
 	// Updating the Selected line
 	gMeme.selectedLineIdx++;
 }
 
 // update the values in the meme
 
-function updateValues(fill, stroke, txt) {
-	gMeme.lines[gMeme.selectedLineIdx].txt = txt;
-	gMeme.lines[gMeme.selectedLineIdx].fill = fill;
-	gMeme.lines[gMeme.selectedLineIdx].stroke = stroke;
+function updateValues(vals) {
+	gMeme.lines[gMeme.selectedLineIdx].txt = vals.txt;
+	gMeme.lines[gMeme.selectedLineIdx].fill = vals.fill;
+	gMeme.lines[gMeme.selectedLineIdx].stroke = vals.stroke;
+	// gMeme.lines[gMeme.selectedLineIdx].size = vals.size;
+	// gMeme.lines[gMeme.selectedLineIdx].fontFam = vals.fontFam;
 }
-
 //
 
 function updateFontSize(num) {
 	gMeme.lines[gMeme.selectedLineIdx].size += num;
+}
+function deleteLine() {
+	gMeme.lines.splice(gMeme.selectedLineIdx--, 1);
 }
 
 // ****CREATE**
@@ -87,7 +102,11 @@ function _createImg(url, keywords = 'happy') {
 // Create MEME
 
 function _createMeme(id, selectedLineIdx = 0) {
-	return { selectedImgId: id, selectedLineIdx, lines: [_createLine()] };
+	return {
+		selectedImgId: id,
+		selectedLineIdx,
+		lines: [_createLine({ x: 10, y: 10 })],
+	};
 }
 
 // Create LINE
@@ -114,8 +133,23 @@ function getImgs() {
 	);
 }
 
+function getCurImg() {
+	return gCurImg;
+}
+
+// Get LINE
+
+function getLine() {
+	return gMeme.lines[gMeme.selectedLineIdx];
+}
+
+// get meme object
+
+function getMeme() {
+	return gMeme;
+}
+
 function getMemeFont() {
-	console.log(gMeme);
 	const { fontFam, size } = gMeme.lines[gMeme.selectedLineIdx];
 	return `bold ${size}px ${fontFam}`;
 }
