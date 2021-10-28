@@ -34,9 +34,9 @@
 			</div>
 			<nav class="main-nav">
 				<ul class="clean-list flex align-center">
+					<button class="btn btn-menu">X</button>
 					<li><a href="#" class="link gallery-btn active">Gallery</a></li>
 					<li><a href="#" class="link memes-btn">Memes</a></li>
-					<li><a href="#" class="link">About</a></li>
 				</ul>
 			</nav>
 			<button class="btn btn-menu">&#9776;</button>
@@ -44,16 +44,24 @@
 
 		<main class="main-content">
 			<!-- Gallery -->
-			<section class="gallery-section-container main-layout hidden">
+			<section class="gallery-section-container main-layout">
 				<section class="search-section flex align-center space-between">
-					<input
-						list="image-keywords"
-						id="keyword-choice"
-						name="keyword-choice"
-						placeholder="Enter search keyword"
-					/>
+					<div class="search-box flex column">
+						<input
+							list="image-keywords"
+							id="keyword-choice"
+							name="keyword-choice"
+							placeholder="Enter search keyword"
+						/>
 
-					<datalist id="image-keywords"> </datalist>
+						<datalist id="image-keywords"> </datalist>
+						<button
+							class="btn sort-btn show-all-btn btn-orange-white"
+							value="all"
+						>
+							Show All
+						</button>
+					</div>
 					<div class="sort-btns-container flex align-center"></div>
 				</section>
 				<section class="images-section flex align-center">
@@ -63,9 +71,11 @@
 					></div>
 				</section>
 			</section>
-			<section class="meme-editor-section flex align-center main-layout">
-				<div class="canvas-container">
-					<canvas id="canvas" width="400" height="400"></canvas>
+
+			<!-- CANVAS -->
+			<section class="meme-editor-section flex align-center main-layout hidden">
+				<div class="canvas-container flex align-center">
+					<canvas id="canvas" width="375" height="375"></canvas>
 				</div>
 				<div class="editor-tools-container flex column">
 					<div class="control-box flex column">
@@ -90,12 +100,30 @@
 						</div>
 
 						<div class="control-row flex align-center">
-							<button name="up" class="btn flex align-center">&uparrow;</button>
-							<button name="down" class="btn flex align-center">
+							<button name="moveLine" value="up" class="btn flex align-center">
+								&uparrow;
+							</button>
+							<button
+								name="moveLine"
+								value="down"
+								class="btn flex align-center"
+							>
 								&downarrow;
 							</button>
-							<button name="increase" class="btn flex align-center">+</button>
-							<button name="decrease" class="btn flex align-center">-</button>
+							<button
+								name="changeFontSize"
+								value="increase"
+								class="btn flex align-center"
+							>
+								A+
+							</button>
+							<button
+								name="changeFontSize"
+								value="decrease"
+								class="btn flex align-center"
+							>
+								A-
+							</button>
 						</div>
 
 						<div class="control-row flex align-center">
@@ -106,13 +134,7 @@
 							>
 								<img src="imgs/icons/align-to-left.png" alt="Align to left" />
 							</button>
-							<button
-								name="textAlign"
-								value="right"
-								class="btn flex align-center"
-							>
-								<img src="imgs/icons/align-to-right.png" alt="Align to right" />
-							</button>
+
 							<button
 								name="textAlign"
 								value="center"
@@ -122,6 +144,13 @@
 									src="imgs/icons/center-text-alignment.png"
 									alt="Align to center"
 								/>
+							</button>
+							<button
+								name="textAlign"
+								value="right"
+								class="btn flex align-center"
+							>
+								<img src="imgs/icons/align-to-right.png" alt="Align to right" />
 							</button>
 						</div>
 
@@ -159,8 +188,6 @@
 							download="my-img.jpg"
 							>Download as jpeg</a
 						>
-
-						<button class="btn btn-orange">Share</button>
 					</div>
 				</div>
 			</section>

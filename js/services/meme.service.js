@@ -1,52 +1,29 @@
 'use strict';
-
 // localStorage.clear();
-
+let gKeywordsKeys = ['Men', 'Happy', 'Animal', 'Cute', 'Funny', 'Baby', 'Bad'];
 const gFonts = ['Impact', 'Ariel'];
-
+const DIFF_KEYWORD_SIZE = '14px';
+const gLineHight = '16px';
+const INCREASE_KEYWORD_SIZE = 4;
 const IMGS_COUNT = 18;
 let gSortBy = 'all';
 let gIdCount = 1;
-
-let gKeywords = {};
-
 let gImgs;
 let gCurImg;
-const gLineHight = '16px';
-
+let gKeywords = {};
 let gMeme = {};
+
+// ON LOAD
 
 window.addEventListener('load', function () {
 	_createImgs();
 
 	let keywords = loadFromStorage('keywords');
-	// console.log(Object.entries(keywords));
 	if (!keywords || keywords === {}) {
-		keywords = {
-			Funny: { frequency: 1, fontSize: '14px' },
-			Happy: { frequency: 1, fontSize: '14px' },
-			Animal: { frequency: 1, fontSize: '14px' },
-			Cute: { frequency: 1, fontSize: '14px' },
-		};
-
-		addKeyWords(gImgs[0], ['Funny']);
-		addKeyWords(gImgs[1], ['Happy', 'Animal', 'Cute']);
-		addKeyWords(gImgs[2], ['Funny', 'Cute']);
-		addKeyWords(gImgs[3], ['Animal']);
-		addKeyWords(gImgs[4], ['Funny']);
-		addKeyWords(gImgs[5], ['Funny']);
-		addKeyWords(gImgs[6], ['Funny']);
-		addKeyWords(gImgs[7], ['Funny']);
-		addKeyWords(gImgs[8], ['Funny']);
-		addKeyWords(gImgs[9], ['Funny']);
-		addKeyWords(gImgs[10], ['Funny']);
-		addKeyWords(gImgs[11], ['Funny']);
-		addKeyWords(gImgs[12], ['Funny']);
-		addKeyWords(gImgs[13], ['Funny']);
-		addKeyWords(gImgs[14], ['Funny']);
-		addKeyWords(gImgs[15], ['Funny']);
-		addKeyWords(gImgs[16], ['Funny']);
-		addKeyWords(gImgs[17], ['Funny']);
+		keywords = gKeywordsKeys.reduce((acc, cur) => {
+			acc[cur.toLocaleLowerCase()] = _createKeyword();
+			return acc;
+		}, {});
 	}
 
 	gKeywords = keywords;
@@ -55,27 +32,21 @@ window.addEventListener('load', function () {
 });
 // Gallery
 
+// SORT by
+
 function sortBy(sortBy, fontSize) {
+	const prevSort = gSortBy;
 	gSortBy = sortBy;
-	gKeywords[gSortBy].frequency++;
-	gKeywords[gSortBy].fontSize = fontSize;
-	_saveKeywordsToStorage();
-}
 
-// Create image meme
+	if (sortBy === 'all') return;
 
-function createImgMeme(imgId) {
-	gCurImg = getImgById(imgId);
-	gMeme = _createMeme(imgId);
-	return gCurImg;
-}
+	if (prevSort !== gSortBy) {
+		gKeywords[gSortBy].frequency++;
+		gKeywords[gSortBy].fontSize = fontSize + INCREASE_KEYWORD_SIZE + 'px';
+		_saveKeywordsToStorage();
+	}
 
-// Get image by Id
-
-// console.log(getImgById(3));
-function getImgById(imgId) {
-	return gImgs.find(({ id }) => id === +imgId);
-	// return gImgs.find((img) => img.id === +id);
+	return gKeywords[gSortBy].fontSize;
 }
 
 // Go to the NEXT line
@@ -118,7 +89,6 @@ function moveText(num, max, min) {
 // Align text
 
 function alignText(alignment, width) {
-	console.log(alignment);
 	gMeme.lines[gMeme.selectedLineIdx].textAlign = alignment;
 	gMeme.lines[gMeme.selectedLineIdx].pos.x =
 		alignment === 'left' ? 10 : alignment === 'right' ? width - 10 : width / 2;
@@ -157,27 +127,52 @@ function addKeyWords(img, keywords) {
 	img.keywords.push(...keywords);
 }
 
-// ****CREATE**
+// ///////////CREATE//////////////
 
-// create images
+// Create IMAGES
 
 function _createImgs() {
 	let imgs = loadFromStorage('imgs');
 	if (!imgs || !imgs.length) {
 		imgs = [];
-		for (let i = 0; i < IMGS_COUNT; i++)
+		for (let i = 0; i < IMGS_COUNT; i++) {
 			imgs.push(_createImg(`${gIdCount}.jpg`));
+		}
+		addKeyWords(imgs[0], ['funny', 'men']);
+		addKeyWords(imgs[1], ['Happy', 'animal', 'cute']);
+		addKeyWords(imgs[2], ['funny', 'animal', 'cute']);
+		addKeyWords(imgs[3], ['animal']);
+		addKeyWords(imgs[4], ['funny', 'baby', 'cute']);
+		addKeyWords(imgs[5], ['funny', 'men']);
+		addKeyWords(imgs[6], ['funny', 'baby']);
+		addKeyWords(imgs[7], ['funny']);
+		addKeyWords(imgs[8], ['funny', 'baby', 'cute']);
+		addKeyWords(imgs[9], ['funny']);
+		addKeyWords(imgs[10], ['bad']);
+		addKeyWords(imgs[11], ['men']);
+		addKeyWords(imgs[12], ['men']);
+		addKeyWords(imgs[13], ['men']);
+		addKeyWords(imgs[14], ['men']);
+		addKeyWords(imgs[15], ['men']);
+		addKeyWords(imgs[16], ['men']);
+		addKeyWords(imgs[17], ['funny']);
 	}
 	gImgs = imgs;
 	_saveImgsToStorage();
 }
 
-// create image
+// Create IMAGE
 
-function _createImg(url, keywords = ['Happy']) {
-	// if (!gKeywords[keywords]) gKeywords[keywords] = 1;
-
+function _createImg(url, keywords = ['happy']) {
 	return { id: gIdCount++, url, keywords };
+}
+
+// Create image meme
+
+function createImgMeme(imgId) {
+	gCurImg = getImgById(imgId);
+	gMeme = _createMeme(imgId);
+	return gCurImg;
 }
 
 // Create MEME
@@ -205,6 +200,12 @@ function _createLine(
 	return { txt, size, fontFam, stroke, fontStyle, textAlign, fill, pos };
 }
 
+// Create KEYWORD
+
+function _createKeyword(frequency = 1, fontSize = DIFF_KEYWORD_SIZE) {
+	return { frequency, fontSize };
+}
+
 // ///////////////GET////////////////////
 
 // Get the images array
@@ -214,6 +215,12 @@ function getImgs() {
 	return gImgs.filter((img) =>
 		img.keywords.find((keyword) => keyword === gSortBy)
 	);
+}
+
+// Get current sort by
+
+function getCurSort() {
+	return gSortBy;
 }
 
 // Get current image
@@ -228,48 +235,45 @@ function getLine() {
 	return gMeme.lines[gMeme.selectedLineIdx];
 }
 
-// get meme object
+// Get meme object
 
 function getMeme() {
 	return gMeme;
 }
 
-function getMemeFont() {
-	const { fontFam, size } = gMeme.lines[gMeme.selectedLineIdx];
-	return `bold ${size}px ${fontFam}`;
-}
 // Get the Keyword array
 
 function getKeywords() {
 	return gKeywords;
-	// return Object.keys(gKeywords);
 }
 
-// local storage
+// //////////////local storage/////////////////////////
 
-// save to local storage
+// Save IMAGES to local storage
 
 function _saveImgsToStorage() {
 	saveToStorage('imgs', gImgs);
 }
 
-// Save Keyword to local storage
+// Save KEYWORDS to local storage
 
 function _saveKeywordsToStorage() {
 	saveToStorage('keywords', gKeywords);
 }
 
-// ///////////////
+////////////////////////////////////////////////////////////////////////////////////
+// Auxiliary functions
 
-// function isLineClicked(clickedPos = '') {
-// 	const { pos } = [...gMeme.lines.map(({ pos }) => pos)];
-// 	const distance = Math.sqrt(
-// 		(pos.x - clickedPos.x) ** 2 + (pos.y - clickedPos.y) ** 2
-// 	);
-// 	// return distance <= gCircle.size;
-// }
+function isMemeNotActive() {
+	const lines = gMeme.lines;
+	return (
+		gMeme === {} || (lines.length === 1 && !lines[gMeme.selectedLineIdx].txt)
+	);
+}
 
-function moveTxt(dx, dy) {
-	gMeme.lines[gMeme.selectedLineIdx].pos.x += dx;
-	gMeme.lines[gMeme.selectedLineIdx].pos.y += dy;
+// FIND image by id
+
+function getImgById(imgId) {
+	return gImgs.find(({ id }) => id === +imgId);
+	// return gImgs.find((img) => img.id === +id);
 }
