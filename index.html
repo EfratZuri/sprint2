@@ -4,6 +4,12 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
 		<script
 			type="module"
 			src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
@@ -23,7 +29,9 @@
 	<body>
 		<!-- header -->
 		<header class="main-header flex align-center space-between">
-			<h1>Memegen</h1>
+			<div class="logo-box">
+				<img src="imgs/logo/LOGO.png" alt="Memegen logo" />
+			</div>
 			<nav class="main-nav">
 				<ul class="clean-list flex align-center">
 					<li><a href="#" class="link gallery-btn active">Gallery</a></li>
@@ -31,28 +39,31 @@
 					<li><a href="#" class="link">About</a></li>
 				</ul>
 			</nav>
+			<button class="btn btn-menu">&#9776;</button>
 		</header>
 
 		<main class="main-content">
-			<section class="gallery-section-container">
-				<section class="search-section flex space-between">
+			<!-- Gallery -->
+			<section class="gallery-section-container main-layout hidden">
+				<section class="search-section flex align-center space-between">
 					<input
 						list="image-keywords"
 						id="keyword-choice"
 						name="keyword-choice"
+						placeholder="Enter search keyword"
 					/>
 
 					<datalist id="image-keywords"> </datalist>
-					<div class="sort-btns-container"></div>
+					<div class="sort-btns-container flex align-center"></div>
 				</section>
-				<section class="images-section main-layout">
+				<section class="images-section flex align-center">
 					<div
 						class="images-container grid column-layout"
 						data-columns="1,1,1,1"
 					></div>
 				</section>
 			</section>
-			<section class="meme-editor-section flex align-center main-layout hidden">
+			<section class="meme-editor-section flex align-center main-layout">
 				<div class="canvas-container">
 					<canvas id="canvas" width="400" height="400"></canvas>
 				</div>
@@ -77,9 +88,41 @@
 								<ion-icon name="swap-vertical-outline"></ion-icon>
 							</button>
 						</div>
+
 						<div class="control-row flex align-center">
+							<button name="up" class="btn flex align-center">&uparrow;</button>
+							<button name="down" class="btn flex align-center">
+								&downarrow;
+							</button>
 							<button name="increase" class="btn flex align-center">+</button>
 							<button name="decrease" class="btn flex align-center">-</button>
+						</div>
+
+						<div class="control-row flex align-center">
+							<button
+								name="textAlign"
+								value="left"
+								class="btn flex align-center"
+							>
+								<img src="imgs/icons/align-to-left.png" alt="Align to left" />
+							</button>
+							<button
+								name="textAlign"
+								value="right"
+								class="btn flex align-center"
+							>
+								<img src="imgs/icons/align-to-right.png" alt="Align to right" />
+							</button>
+							<button
+								name="textAlign"
+								value="center"
+								class="btn flex align-center"
+							>
+								<img
+									src="imgs/icons/center-text-alignment.png"
+									alt="Align to center"
+								/>
+							</button>
 						</div>
 
 						<!-- font style -->
@@ -88,10 +131,35 @@
 							<input type="color" name="stroke" id="stroke" value="#ffffff" />
 							<label for="color" name="fill">Fill </label>
 							<input type="color" name="fill" id="fill" value="#111111" />
-							<select>
-								<option value="impact" selected>Impact</option>
+							<select id="select-font-fam">
+								<option value="Impact" selected>Impact</option>
+								<option value="Ariel">Ariel</option>
 							</select>
 						</div>
+
+						<div class="control-row flex align-center">
+							<span>Select font style:</span>
+							<select id="select-font-style">
+								<option value="Normal" selected>Normal</option>
+								<option value="Italic">Italic</option>
+								<option value="Bold">Bold</option>
+							</select>
+						</div>
+						<div class="control-row flex align-center">
+							<div class="emojis-box">
+								<button class="btn emoji-btn" value="😇">😇</button>
+								<button class="btn emoji-btn" value="😍">😍</button>
+								<button class="btn emoji-btn" value="🥳">🥳</button>
+							</div>
+						</div>
+						<a
+							href="#"
+							class="btn btn-orange"
+							onclick="downloadImg(this)"
+							download="my-img.jpg"
+							>Download as jpeg</a
+						>
+
 						<button class="btn btn-orange">Share</button>
 					</div>
 				</div>
@@ -99,7 +167,9 @@
 		</main>
 
 		<footer class="main-footer flex column align-center">
-			<div class="logo-box"><h2>memegen</h2></div>
+			<div class="logo-box">
+				<img src="imgs/logo/LOGO.png" alt="Memegen logo" />
+			</div>
 			<p>All right reserved © <span class="year">2021</span></p>
 		</footer>
 	</body>
