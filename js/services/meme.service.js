@@ -1,52 +1,34 @@
 'use strict';
 // localStorage.clear();
-let gKeywordsKeys = ['Men', 'Happy', 'Animal', 'Cute', 'Funny', 'Baby', 'Bad'];
 const gFonts = ['Impact', 'Ariel'];
-const DIFF_KEYWORD_SIZE = '14px';
-const gLineHight = '16px';
+const gAlignments = {
+	left: () => 10,
+	right: (width) => width - 10,
+	center: (width) => width / 2,
+};
+const DIFF_FONT_SIZE = 24;
 const INCREASE_KEYWORD_SIZE = 4;
-const IMGS_COUNT = 18;
-let gSortBy = 'all';
-let gIdCount = 1;
-let gImgs;
+let gSavedMemes;
 let gCurImg;
-let gKeywords = {};
+let gLineDrag;
 let gMeme = {};
 
-// ON LOAD
-
 window.addEventListener('load', function () {
-	_createImgs();
-
-	let keywords = loadFromStorage('keywords');
-	if (!keywords || keywords === {}) {
-		keywords = gKeywordsKeys.reduce((acc, cur) => {
-			acc[cur.toLocaleLowerCase()] = _createKeyword();
-			return acc;
-		}, {});
-	}
-
-	gKeywords = keywords;
-	_saveKeywordsToStorage();
-	_saveImgsToStorage();
+	gSavedMemes = loadFromStorage('savedMemes') || [];
 });
-// Gallery
 
-// SORT by
+// DELETE meme
 
-function sortBy(sortBy, fontSize) {
-	const prevSort = gSortBy;
-	gSortBy = sortBy;
+function removeSavedMeme(idx) {
+	gSavedMemes.splice(idx, 1);
+	_saveMemeImagesToStorage();
+}
 
-	if (sortBy === 'all') return;
+// SAVE canvas
 
-	if (prevSort !== gSortBy) {
-		gKeywords[gSortBy].frequency++;
-		gKeywords[gSortBy].fontSize = fontSize + INCREASE_KEYWORD_SIZE + 'px';
-		_saveKeywordsToStorage();
-	}
-
-	return gKeywords[gSortBy].fontSize;
+function saveCanvas(dataURI) {
+	gSavedMemes.push({ src: dataURI, meme: gMeme, curImg: gCurImg });
+	_saveMemeImagesToStorage();
 }
 
 // Go to the NEXT line
@@ -60,46 +42,53 @@ function toNextLine() {
 
 // Add line
 
-function addLine(vals, height, width, isEmoji = false) {
+function addLine(vals, height, isEmoji = false) {
 	// Placing the sec line at the bottom
-	if (gMeme.lines.length === 1)
-		gMeme.lines.push(
-			_createLine({ x: 10, y: height - 10 - 24 - 5 }, isEmoji ? vals : '')
-		);
-	else
-		gMeme.lines.push(
-			_createLine({ x: 10, y: getRandomInt(0, height) }, isEmoji ? vals : '')
-		);
+	let { x = 10, y } =
+		gMeme.lines.length === 1
+			? { y: height - 10 - 24 - 5 }
+			: { y: getRandomInt(0, height) };
 
+	// Adding a new line
+	gMeme.lines.push(_createLine({ x, y }, isEmoji ? vals : '', isEmoji));
 	!isEmoji && updateValues(vals);
 	// Updating the Selected line
 	gMeme.selectedLineIdx++;
 }
 
+// DELETE line
+
+function deleteLine() {
+	if (gMeme.lines.length === 1) gMeme.lines[gMeme.selectedLineIdx].txt = '';
+	else gMeme.lines.splice(gMeme.selectedLineIdx--, 1);
+
+	return gMeme.lines[gMeme.selectedLineIdx];
+}
+
 // MOVE text
 
 function moveText(num, max, min) {
-	gMeme.lines[gMeme.selectedLineIdx].pos.y += num;
-	const currPos = gMeme.lines[gMeme.selectedLineIdx].pos.y;
+	const curLine = getSelectedLine();
+	curLine.pos.y += num;
+	const currPos = curLine.pos.y;
 	if (currPos > max || currPos < min)
-		gMeme.lines[gMeme.selectedLineIdx].pos.y =
-			currPos < min ? max - 10 : min + 10;
+		curLine.pos.y = currPos < min ? max - 10 : min + 10;
 }
 
 // Align text
 
 function alignText(alignment, width) {
-	gMeme.lines[gMeme.selectedLineIdx].textAlign = alignment;
-	gMeme.lines[gMeme.selectedLineIdx].pos.x =
-		alignment === 'left' ? 10 : alignment === 'right' ? width - 10 : width / 2;
+	const curLine = getSelectedLine();
+	curLine.textAlign = alignment;
+	curLine.pos.x = gAlignments[alignment](width);
 }
 
-// Update the values in the meme
-
 function updateValues(vals) {
-	gMeme.lines[gMeme.selectedLineIdx].txt = vals.txt;
-	gMeme.lines[gMeme.selectedLineIdx].fill = vals.fill;
-	gMeme.lines[gMeme.selectedLineIdx].stroke = vals.stroke;
+	const curLine = getSelectedLine();
+	if (!curLine.isEmoji) curLine.txt = vals.txt;
+	curLine.fill = vals.fill;
+	curLine.stroke = vals.stroke;
+	curLine.size = +vals.fontSizeRange;
 }
 
 function changeFontStyle(style, val) {
@@ -112,72 +101,17 @@ function updateFontSize(num) {
 	gMeme.lines[gMeme.selectedLineIdx].size += num;
 }
 
-// DELETE line
-
-function deleteLine() {
-	if (gMeme.lines.length === 1) gMeme.lines[gMeme.selectedLineIdx].txt = '';
-	else gMeme.lines.splice(gMeme.selectedLineIdx--, 1);
-
-	return gMeme.lines[gMeme.selectedLineIdx];
-}
-
-// Add key word
-
-function addKeyWords(img, keywords) {
-	img.keywords.push(...keywords);
-}
-
-// ///////////CREATE//////////////
-
-// Create IMAGES
-
-function _createImgs() {
-	let imgs = loadFromStorage('imgs');
-	if (!imgs || !imgs.length) {
-		imgs = [];
-		for (let i = 0; i < IMGS_COUNT; i++) {
-			imgs.push(_createImg(`${gIdCount}.jpg`));
-		}
-		addKeyWords(imgs[0], ['funny', 'men']);
-		addKeyWords(imgs[1], ['Happy', 'animal', 'cute']);
-		addKeyWords(imgs[2], ['funny', 'animal', 'cute']);
-		addKeyWords(imgs[3], ['animal']);
-		addKeyWords(imgs[4], ['funny', 'baby', 'cute']);
-		addKeyWords(imgs[5], ['funny', 'men']);
-		addKeyWords(imgs[6], ['funny', 'baby']);
-		addKeyWords(imgs[7], ['funny']);
-		addKeyWords(imgs[8], ['funny', 'baby', 'cute']);
-		addKeyWords(imgs[9], ['funny']);
-		addKeyWords(imgs[10], ['bad']);
-		addKeyWords(imgs[11], ['men']);
-		addKeyWords(imgs[12], ['men']);
-		addKeyWords(imgs[13], ['men']);
-		addKeyWords(imgs[14], ['men']);
-		addKeyWords(imgs[15], ['men']);
-		addKeyWords(imgs[16], ['men']);
-		addKeyWords(imgs[17], ['funny']);
-	}
-	gImgs = imgs;
-	_saveImgsToStorage();
-}
-
-// Create IMAGE
-
-function _createImg(url, keywords = ['happy']) {
-	return { id: gIdCount++, url, keywords };
-}
+/////////////CREATE//////////////
 
 // Create image meme
 
 function createImgMeme(imgId) {
-	gCurImg = getImgById(imgId);
-	gMeme = _createMeme(imgId);
-	return gCurImg;
+	[gCurImg, gMeme] = [getImgById(imgId), createMeme(imgId)];
 }
 
 // Create MEME
 
-function _createMeme(id, selectedLineIdx = 0) {
+function createMeme(id, selectedLineIdx = 0) {
 	return {
 		selectedImgId: id,
 		selectedLineIdx,
@@ -190,38 +124,51 @@ function _createMeme(id, selectedLineIdx = 0) {
 function _createLine(
 	pos = {},
 	txt = '',
-	size = 24,
+	isEmoji = false,
+	size = DIFF_FONT_SIZE,
+	isDrag = false,
 	fontFam = 'Impact',
 	textAlign = 'left',
 	fontStyle = 'Normal',
 	stroke = '#fff',
 	fill = '#111'
 ) {
-	return { txt, size, fontFam, stroke, fontStyle, textAlign, fill, pos };
+	return {
+		txt,
+		isDrag,
+		isEmoji,
+		size,
+		fontFam,
+		stroke,
+		fontStyle,
+		textAlign,
+		fill,
+		pos,
+	};
 }
 
-// Create KEYWORD
+/////////////////SET////////////////////
 
-function _createKeyword(frequency = 1, fontSize = DIFF_KEYWORD_SIZE) {
-	return { frequency, fontSize };
+// Set line DRAG
+
+function setLineDrag(line, isDrag) {
+	if (isDrag) gLineDrag = line;
+	gLineDrag.isDrag = isDrag;
+}
+
+// Set current MEME
+
+function setCurMeme(meme) {
+	gMeme = meme;
+}
+
+// Set current IMAGE
+
+function setCurImg(img) {
+	gCurImg = img;
 }
 
 // ///////////////GET////////////////////
-
-// Get the images array
-
-function getImgs() {
-	if (gSortBy === 'all') return gImgs;
-	return gImgs.filter((img) =>
-		img.keywords.find((keyword) => keyword === gSortBy)
-	);
-}
-
-// Get current sort by
-
-function getCurSort() {
-	return gSortBy;
-}
 
 // Get current image
 
@@ -229,10 +176,16 @@ function getCurImg() {
 	return gCurImg;
 }
 
-// Get LINE
+// Get Selected LINE
 
-function getLine() {
+function getSelectedLine() {
 	return gMeme.lines[gMeme.selectedLineIdx];
+}
+
+// Get lines
+
+function getLines() {
+	return gMeme.lines;
 }
 
 // Get meme object
@@ -241,24 +194,16 @@ function getMeme() {
 	return gMeme;
 }
 
-// Get the Keyword array
+// Get SAVED memes
 
-function getKeywords() {
-	return gKeywords;
+function getSavedMemes() {
+	return gSavedMemes;
 }
 
-// //////////////local storage/////////////////////////
+// Get line drag
 
-// Save IMAGES to local storage
-
-function _saveImgsToStorage() {
-	saveToStorage('imgs', gImgs);
-}
-
-// Save KEYWORDS to local storage
-
-function _saveKeywordsToStorage() {
-	saveToStorage('keywords', gKeywords);
+function getLineDrag() {
+	return gLineDrag;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -271,9 +216,35 @@ function isMemeNotActive() {
 	);
 }
 
-// FIND image by id
+/////////////////////////////////////////////
 
-function getImgById(imgId) {
-	return gImgs.find(({ id }) => id === +imgId);
-	// return gImgs.find((img) => img.id === +id);
+function moveLine(dx, dy) {
+	gLineDrag.pos.x += dx;
+	gLineDrag.pos.y += dy;
+}
+
+//
+
+function lineClicked(lineWidth, evPos) {
+	return gMeme.lines.find(({ txt, pos, size }, i) => {
+		const isClicked = isLineClicked(evPos, pos, lineWidth(txt), size);
+		if (isClicked) gMeme.selectedLineIdx = i;
+		return isClicked;
+	});
+}
+
+//
+
+function isLineClicked(evPos, linePos, width, height) {
+	return (
+		evPos.y <= height + linePos.y &&
+		evPos.y >= linePos.y &&
+		evPos.x <= width + linePos.x &&
+		evPos.x >= linePos.x
+	);
+}
+
+////////////////local storage/////////////////////////
+function _saveMemeImagesToStorage() {
+	saveToStorage('savedMemes', gSavedMemes);
 }

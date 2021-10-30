@@ -17,3 +17,14 @@ function getRandomInt(min, max) {
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function setEventListener(classList, listener, type = 'click') {
+	document
+		.querySelectorAll(classList)
+		.forEach((el) => el.addEventListener(type, listener));
+}
+
+function selectEls(...selectors) {
+	return selectors.map((selector) => document.querySelector(selector));
+	// return document.querySelector(selector);
+}

@@ -21,12 +21,15 @@
 
 		<script defer src="js/services/storage.service.js"></script>
 		<script defer src="js/services/util.service.js"></script>
+		<script defer src="js/services/gallery.service.js"></script>
 		<script defer src="js/services/meme.service.js"></script>
+		<script defer src="js/saved-controller.js"></script>
 		<script defer src="js/main.js"></script>
 		<link rel="stylesheet" href="css/style.css" />
-		<title>Meme</title>
+		<title>Memegen</title>
 	</head>
 	<body>
+		<div class="main-screen"></div>
 		<!-- header -->
 		<header class="main-header flex align-center space-between">
 			<div class="logo-box">
@@ -37,6 +40,8 @@
 					<button class="btn btn-menu">X</button>
 					<li><a href="#" class="link gallery-btn active">Gallery</a></li>
 					<li><a href="#" class="link memes-btn">Memes</a></li>
+					<li><a href="#" class="link saved-meme-btn">Save</a></li>
+					<li><button class="btn about-btn">About</button></li>
 				</ul>
 			</nav>
 			<button class="btn btn-menu">&#9776;</button>
@@ -70,128 +75,203 @@
 						data-columns="1,1,1,1"
 					></div>
 				</section>
+
+				<section class="about-section">
+					<div class="main-layout flex align-center">
+						<div class="image-box"></div>
+						<div class="flex column">
+							<h2>Efrat Zuri</h2>
+							<div class="text-body">
+								<p>
+									Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+									Commodi consectetur vel hic fugit impedit nesciunt odio non,
+									veritatis laudantium? Quibusdam saepe pariatur veniam suscipit
+									voluptas dolore laboriosam magnam? Excepturi, dolore!
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
 			</section>
 
 			<!-- CANVAS -->
-			<section class="meme-editor-section flex align-center main-layout hidden">
-				<div class="canvas-container flex align-center">
-					<canvas id="canvas" width="375" height="375"></canvas>
+			<section class="meme-section flex align-center main-layout column hidden">
+				<div class="meme-editor-header">
+					<input
+						type="file"
+						class="file-input btn"
+						name="image"
+						onchange="onImgInput(event)"
+					/>
+					<div class="share-container"></div>
 				</div>
-				<div class="editor-tools-container flex column">
-					<div class="control-box flex column">
-						<input
-							type="text"
-							name="txt"
-							id="text"
-							placeholder="Loren ipsum"
-							class="input-text-meme input"
-						/>
+				<section class="meme-editor-section flex align-center main-layout">
+					<div class="canvas-container flex align-center">
+						<canvas id="canvas" width="375" height="375"></canvas>
+					</div>
 
-						<div class="control-row flex align-center">
-							<button name="delete" class="btn flex align-center">
-								<ion-icon name="trash-outline"></ion-icon>
-							</button>
-							<button name="add" class="btn flex align-center">
-								<ion-icon name="add-outline"></ion-icon>
-							</button>
-							<button name="swap" class="btn flex align-center">
-								<ion-icon name="swap-vertical-outline"></ion-icon>
-							</button>
-						</div>
+					<div class="editor-tools-container flex column">
+						<div class="control-box flex column">
+							<input
+								type="text"
+								name="txt"
+								id="text"
+								placeholder="Loren ipsum"
+								class="input-text-meme input"
+							/>
 
-						<div class="control-row flex align-center">
-							<button name="moveLine" value="up" class="btn flex align-center">
-								&uparrow;
-							</button>
-							<button
-								name="moveLine"
-								value="down"
-								class="btn flex align-center"
-							>
-								&downarrow;
-							</button>
-							<button
-								name="changeFontSize"
-								value="increase"
-								class="btn flex align-center"
-							>
-								A+
-							</button>
-							<button
-								name="changeFontSize"
-								value="decrease"
-								class="btn flex align-center"
-							>
-								A-
-							</button>
-						</div>
+							<div class="control-row flex align-center">
+								<button name="delete" class="btn flex align-center">
+									<ion-icon name="trash-outline"></ion-icon>
+								</button>
+								<button name="add" class="btn flex align-center">
+									<ion-icon name="add-outline"></ion-icon>
+								</button>
+								<button name="swap" class="btn flex align-center">
+									<ion-icon name="swap-vertical-outline"></ion-icon>
+								</button>
+							</div>
 
-						<div class="control-row flex align-center">
-							<button
-								name="textAlign"
-								value="left"
-								class="btn flex align-center"
-							>
-								<img src="imgs/icons/align-to-left.png" alt="Align to left" />
-							</button>
+							<div class="control-row flex align-center">
+								<button
+									name="moveLine"
+									value="up"
+									class="btn flex align-center"
+								>
+									&uparrow;
+								</button>
+								<button
+									name="moveLine"
+									value="down"
+									class="btn flex align-center"
+								>
+									&downarrow;
+								</button>
+							</div>
 
-							<button
-								name="textAlign"
-								value="center"
-								class="btn flex align-center"
-							>
-								<img
-									src="imgs/icons/center-text-alignment.png"
-									alt="Align to center"
-								/>
-							</button>
-							<button
-								name="textAlign"
-								value="right"
-								class="btn flex align-center"
-							>
-								<img src="imgs/icons/align-to-right.png" alt="Align to right" />
-							</button>
-						</div>
+							<div class="control-row font-size-row flex column align-center">
+								<span for="range">Font size:</span>
+								<div class="flex slider-box">
+									<input
+										type="range"
+										name="fontSizeRange"
+										id="fontSizeRange"
+										class="slider"
+										step="1"
+										min="0"
+										max="100"
+										value="14"
+									/>
+									<span class="font-size-label">14</span>
+								</div>
+								<div class="flex">
+									<button
+										name="changeFontSize"
+										value="increase"
+										class="btn flex align-center"
+									>
+										<span> A+ </span>
+									</button>
+									<button
+										name="changeFontSize"
+										value="decrease"
+										class="btn flex align-center"
+									>
+										<span> A- </span>
+									</button>
+								</div>
+							</div>
 
-						<!-- font style -->
-						<div class="control-row flex align-center">
-							<label for="color" name="stroke">Stroke </label>
-							<input type="color" name="stroke" id="stroke" value="#ffffff" />
-							<label for="color" name="fill">Fill </label>
-							<input type="color" name="fill" id="fill" value="#111111" />
-							<select id="select-font-fam">
-								<option value="Impact" selected>Impact</option>
-								<option value="Ariel">Ariel</option>
-							</select>
-						</div>
+							<div class="control-row flex align-center">
+								<button
+									name="textAlign"
+									value="left"
+									class="btn flex align-center"
+								>
+									<img src="imgs/icons/align-to-left.png" />
+								</button>
 
-						<div class="control-row flex align-center">
-							<span>Select font style:</span>
-							<select id="select-font-style">
-								<option value="Normal" selected>Normal</option>
-								<option value="Italic">Italic</option>
-								<option value="Bold">Bold</option>
-							</select>
-						</div>
-						<div class="control-row flex align-center">
-							<div class="emojis-box">
-								<button class="btn emoji-btn" value="😇">😇</button>
-								<button class="btn emoji-btn" value="😍">😍</button>
-								<button class="btn emoji-btn" value="🥳">🥳</button>
+								<button
+									name="textAlign"
+									value="center"
+									class="btn flex align-center"
+								>
+									<img src="imgs/icons/center-text-alignment.png" />
+								</button>
+								<button
+									name="textAlign"
+									value="right"
+									class="btn flex align-center"
+								>
+									<img src="imgs/icons/align-to-right.png" />
+								</button>
+							</div>
+
+							<!-- font style -->
+							<div class="control-row flex align-center">
+								<label for="color" name="stroke">Stroke </label>
+								<input type="color" name="stroke" id="stroke" value="#ffffff" />
+								<label for="color" name="fill">Fill </label>
+								<input type="color" name="fill" id="fill" value="#111111" />
+								<select id="font-fam" name="font-fam">
+									<option value="Impact" selected>Impact</option>
+									<option value="Ariel">Ariel</option>
+								</select>
+							</div>
+
+							<div class="control-row flex align-center">
+								<span>Select font style:</span>
+								<select id="font-style" name="font-style">
+									<option value="Normal" selected>Normal</option>
+									<option value="Italic">Italic</option>
+									<option value="Bold">Bold</option>
+								</select>
+							</div>
+							<div class="control-row flex align-center">
+								<div class="emojis-box">
+									<button class="btn emoji-btn" value="😇">😇</button>
+									<button class="btn emoji-btn" value="😍">😍</button>
+									<button class="btn emoji-btn" value="🥳">🥳</button>
+								</div>
+							</div>
+							<div class="canvas-btns flex">
+								<a
+									href="#"
+									class="btn btn-orange-white"
+									onclick="downloadImg(this)"
+									download="my-img.jpg"
+									>Download as jpeg</a
+								>
+								<button class="btn save-btn btn-orange-white">Save</button>
+								<button class="btn share-btn btn-orange-white">Share</button>
 							</div>
 						</div>
-						<a
-							href="#"
-							class="btn btn-orange"
-							onclick="downloadImg(this)"
-							download="my-img.jpg"
-							>Download as jpeg</a
-						>
+					</div>
+				</section>
+			</section>
+
+			<!-- SAVED -->
+			<section
+				class="saved-memes-section flex align-center main-layout column hidden"
+			>
+				<div class="no-saved-memes-container flex column">
+					<h3>You have not saved any memes yet.</h3>
+					<div class="text-body">
+						<p>
+							Go to the
+							<a href="#" class="gallery-btn btn link orange-link">gallery</a>
+							to create some.
+						</p>
 					</div>
 				</div>
+				<div
+					class="saved-meme-container grid column-layout"
+					data-columns="1,1,1,1"
+				></div>
 			</section>
 		</main>
+
+		<!-- footer -->
 
 		<footer class="main-footer flex column align-center">
 			<div class="logo-box">
@@ -199,5 +279,21 @@
 			</div>
 			<p>All right reserved © <span class="year">2021</span></p>
 		</footer>
+
+		<!-- Modal -->
+
+		<div class="modal">
+			<header class="sec-header">
+				<h2>Memegen</h2>
+			</header>
+			<div class="text-body">
+				<p>
+					Lorem ipsum dolor, sit amet consectetur adipisicing elit. Hic
+					veritatis culpa tenetur molestias dolore, minus fugiat sit ullam
+					consectetur quidem quas perspiciatis consequatur eveniet eos placeat?
+					Eos doloribus fugit soluta.
+				</p>
+			</div>
+		</div>
 	</body>
 </html>
