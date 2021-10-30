@@ -18,7 +18,6 @@ const gEditBtnsFunctions = {
 	textAlign: onAlignTxt,
 	changeFontSize: onUpdateFontSize,
 };
-
 const gNavLinkSec = {
 	save: renderSavedMemes,
 	gallery: renderGallery,
@@ -26,7 +25,6 @@ const gNavLinkSec = {
 };
 
 // LOAD
-
 window.addEventListener('load', function () {
 	// Selectors
 	[gElCanvas, gTxtInput, gElImgsContainer] = selectEls(
@@ -272,8 +270,6 @@ function resizeCanvas() {
 //////////////////////////////// CANVAS RENDER////////////////////////////
 
 // Render image canvas
-
-///////
 function renderCanvasImg(curImg) {
 	const img = new Image();
 	img.src = `${curImg.url}`;
