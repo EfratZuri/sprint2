@@ -164,7 +164,7 @@ img {
 }
 
 .sort-btns-container {
-	padding: 10px 20px;
+	padding: 20px 30px;
 	width: 100%;
 	overflow-y: scroll;
 	gap: 10px;
@@ -205,7 +205,6 @@ img {
 }
 /* meme section */
 .meme-section {
-	width: 100%;
 	gap: 20px;
 }
 
@@ -223,7 +222,7 @@ img {
 }
 
 .canvas-container {
-	width: 80vw;
+	/* width: 80vw; */
 }
 
 #canvas {
@@ -591,7 +590,7 @@ body.modal-open .modal {
 	}
 
 	.canvas-container {
-		width: 80vw;
+		width: 60vw;
 		height: 60vh;
 	}
 

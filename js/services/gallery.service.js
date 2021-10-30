@@ -1,5 +1,4 @@
 'use strict';
-
 const DIFF_KEYWORD_SIZE = '14px';
 let gKeywordsKeys = [
 	'Dog',
@@ -63,8 +62,7 @@ function _createImgs() {
 		imgs = [];
 
 		for (let i = 0; i < 25; i++) {
-			imgs.push(_createImg(`./imgs/meme-imgs/${gIdCount}.jpg`));
-			// imgs.push(_createImg(`${gIdCount}.jpg`));
+			imgs.push(_createImg(`imgs/meme-imgs/${gIdCount}.jpg`));
 		}
 		addKeyWords(imgs[0], ['woman']);
 		addKeyWords(imgs[1], ['happy', 'funny', 'cute', 'baby']);
