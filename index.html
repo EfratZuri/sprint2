@@ -25,6 +25,7 @@
 		<script defer src="js/services/meme.service.js"></script>
 		<script defer src="js/main.js"></script>
 		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/helpers.css" />
 		<title>Memegen</title>
 	</head>
 	<body>
@@ -37,7 +38,7 @@
 			<nav class="main-nav">
 				<ul class="clean-list flex align-center">
 					<button class="btn btn-menu">X</button>
-					<li><a href="#" class="link gallery-btn active">Gallery</a></li>
+					<li><a href="#" class="link btn-gallery active">Gallery</a></li>
 					<li><a href="#" class="link memes-btn">Memes</a></li>
 					<li><a href="#" class="link saved-meme-btn">Save</a></li>
 					<li><button class="btn about-btn">About</button></li>
@@ -49,6 +50,15 @@
 		<main class="main-content">
 			<!-- Gallery -->
 			<section class="gallery-section-container main-layout">
+				<div class="upload-img-box">
+					<input
+						type="file"
+						class="file-input btn"
+						name="image"
+						onchange="onImgInput(event)"
+					/>
+					<div class="share-container"></div>
+				</div>
 				<section class="search-section flex align-center space-between">
 					<div class="search-box flex column">
 						<input
@@ -92,19 +102,9 @@
 					</div>
 				</section>
 			</section>
-
 			<!-- CANVAS -->
 			<section class="meme-section flex align-center main-layout column hidden">
-				<div class="meme-editor-header">
-					<input
-						type="file"
-						class="file-input btn"
-						name="image"
-						onchange="onImgInput(event)"
-					/>
-					<div class="share-container"></div>
-				</div>
-				<section class="meme-editor-section flex align-center main-layout">
+				<section class="meme-editor-section flex align-center">
 					<div class="canvas-container flex align-center">
 						<canvas id="canvas" width="375" height="375"></canvas>
 					</div>
@@ -115,11 +115,11 @@
 								type="text"
 								name="txt"
 								id="text"
-								placeholder="Loren ipsum"
+								placeholder="Add text"
 								class="input-text-meme input"
 							/>
 
-							<div class="control-row flex align-center">
+							<div class="control-row flex">
 								<button name="delete" class="btn flex align-center">
 									<ion-icon name="trash-outline"></ion-icon>
 								</button>
@@ -149,7 +149,7 @@
 							</div>
 
 							<div class="control-row font-size-row flex column align-center">
-								<span for="range">Font size:</span>
+								<span for="range " class="row-sub">Font size:</span>
 								<div class="flex slider-box">
 									<input
 										type="range"
@@ -157,11 +157,11 @@
 										id="fontSizeRange"
 										class="slider"
 										step="1"
-										min="0"
-										max="100"
+										min="10"
+										max="110"
 										value="14"
 									/>
-									<span class="font-size-label">14</span>
+									<span class="font-size-label row-sub">14</span>
 								</div>
 								<div class="flex">
 									<button
@@ -169,14 +169,14 @@
 										value="increase"
 										class="btn flex align-center"
 									>
-										<span> A+ </span>
+										A+
 									</button>
 									<button
 										name="changeFontSize"
 										value="decrease"
 										class="btn flex align-center"
 									>
-										<span> A- </span>
+										A-
 									</button>
 								</div>
 							</div>
@@ -219,7 +219,7 @@
 							</div>
 
 							<div class="control-row flex align-center">
-								<span>Select font style:</span>
+								<span class="row-sub">Select font style:</span>
 								<select id="font-style" name="font-style">
 									<option value="Normal" selected>Normal</option>
 									<option value="Italic">Italic</option>
@@ -239,9 +239,10 @@
 									class="btn btn-orange-white"
 									onclick="downloadImg(this)"
 									download="my-img.jpg"
-									>Download as jpeg</a
+									>Download</a
 								>
 								<button class="btn save-btn btn-orange-white">Save</button>
+								<button class="btn btn-share btn-orange-white">Share</button>
 							</div>
 						</div>
 					</div>
@@ -257,7 +258,7 @@
 					<div class="text-body">
 						<p>
 							Go to the
-							<a href="#" class="gallery-btn btn link orange-link">gallery</a>
+							<a href="#" class="btn-gallery btn link orange-link">gallery</a>
 							to create some.
 						</p>
 					</div>

@@ -18,13 +18,19 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function setEventListener(classList, listener, type = 'click') {
+function setEventListeners(classList, listener, type = 'click') {
 	document
 		.querySelectorAll(classList)
 		.forEach((el) => el.addEventListener(type, listener));
 }
+function selectEls(selector) {
+	return document.querySelectorAll(selector);
+}
 
-function selectEls(...selectors) {
-	return selectors.map((selector) => document.querySelector(selector));
-	// return document.querySelector(selector);
+function selectEl(selector) {
+	return document.querySelector(selector);
+}
+
+function setEventListener(classList, listener, type = 'click') {
+	return document.querySelector(classList).addEventListener(type, listener);
 }

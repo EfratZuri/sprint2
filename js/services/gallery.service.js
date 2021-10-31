@@ -43,14 +43,35 @@ function sortBy(sortBy, fontSize) {
 	const prevSort = gSortBy;
 	gSortBy = sortBy;
 	if (sortBy === 'all') return;
-
 	if (prevSort !== gSortBy) {
 		gKeywords[gSortBy].frequency++;
 		gKeywords[gSortBy].fontSize = fontSize + INCREASE_KEYWORD_SIZE + 'px';
 		_saveKeywordsToStorage();
 	}
-
 	return gKeywords[gSortBy].fontSize;
+}
+
+//////////////////////////////////////GET//////////////////
+
+// Get the IMAGES array
+
+function getImgs() {
+	if (gSortBy === 'all') return gImgs;
+	return gImgs.filter((img) =>
+		img.keywords.find((keyword) => keyword === gSortBy)
+	);
+}
+
+// Get current sort by
+
+function getCurSort() {
+	return gSortBy;
+}
+
+// Get the Keyword array
+
+function getKeywords() {
+	return gKeywords;
 }
 
 //////////////////////////////////////CREATE//////////////////
@@ -104,29 +125,6 @@ function _createImg(url, keywords = []) {
 
 function _createKeyword(frequency = 1, fontSize = DIFF_KEYWORD_SIZE) {
 	return { frequency, fontSize };
-}
-
-//////////////////////////////////////GET//////////////////
-
-// Get the IMAGES array
-
-function getImgs() {
-	if (gSortBy === 'all') return gImgs;
-	return gImgs.filter((img) =>
-		img.keywords.find((keyword) => keyword === gSortBy)
-	);
-}
-
-// Get current sort by
-
-function getCurSort() {
-	return gSortBy;
-}
-
-// Get the Keyword array
-
-function getKeywords() {
-	return gKeywords;
 }
 
 // //////////////local storage/////////////////////////

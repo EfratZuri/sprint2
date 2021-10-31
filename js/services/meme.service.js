@@ -1,6 +1,4 @@
 'use strict';
-// localStorage.clear();
-const gFonts = ['Impact', 'Ariel'];
 const gAlignments = {
 	left: () => 10,
 	right: (width) => width - 10,
@@ -26,8 +24,8 @@ function removeSavedMeme(idx) {
 
 // SAVE canvas
 
-function saveCanvas(dataURI) {
-	gSavedMemes.push({ src: dataURI, meme: gMeme, curImg: gCurImg });
+function saveCanvas(dataURI, time) {
+	gSavedMemes.push({ src: dataURI, meme: gMeme, curImg: gCurImg, time });
 	_saveMemeImagesToStorage();
 }
 
@@ -61,7 +59,6 @@ function addLine(vals, height, isEmoji = false) {
 function deleteLine() {
 	if (gMeme.lines.length === 1) gMeme.lines[gMeme.selectedLineIdx].txt = '';
 	else gMeme.lines.splice(gMeme.selectedLineIdx--, 1);
-
 	return gMeme.lines[gMeme.selectedLineIdx];
 }
 

@@ -32,6 +32,7 @@ img {
 }
 
 .logo-box {
+	cursor: pointer;
 	width: var(--logo-width);
 }
 
@@ -99,15 +100,20 @@ img {
 .main-content {
 	margin-bottom: 20px;
 }
+.main-content > * {
+	min-height: 80vh;
+}
 
 .about-section {
 	background-color: #f7f7f7;
 	padding: 20px;
 	margin-top: 50px;
-
 	margin-bottom: 50px;
 }
 
+.upload-img-box {
+	margin-bottom: 20px;
+}
 /* search section */
 
 .search-section {
@@ -213,7 +219,7 @@ img {
 	flex-direction: column;
 	gap: 30px;
 	font-size: 22px;
-
+	width: 100%;
 	margin-bottom: 20px;
 }
 
@@ -233,8 +239,7 @@ img {
 	width: 100%;
 }
 .control-box {
-	width: 100%;
-
+	align-items: left;
 	gap: 10px;
 }
 
@@ -246,15 +251,18 @@ img {
 	width: 100%;
 }
 
-.control-row span {
+.row-sub {
 	font-size: 16px;
 	font-weight: 600;
 }
+
 .control-row .btn[name='textAlign'] {
 	height: 25px;
 	width: 25px;
 }
-
+.slider-box {
+	gap: 20px;
+}
 .canvas-btns {
 	flex-direction: column;
 	gap: 20px;
@@ -297,6 +305,10 @@ img {
 .saved-meme-box {
 	height: 100%;
 	cursor: pointer;
+	gap: 10px;
+}
+
+.save-btns-box {
 	gap: 10px;
 }
 
@@ -407,20 +419,6 @@ body.modal-open .modal {
 }
 .flex.column {
 	flex-direction: column;
-}
-
-/* list helpers */
-
-.clean-list {
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-}
-
-/* hide */
-
-.hidden {
-	display: none;
 }
 
 /*  */
@@ -575,6 +573,9 @@ body.modal-open .modal {
 	.meme-editor-section {
 		flex-direction: row;
 	}
+	.canvas-btns {
+		justify-content: center;
+	}
 
 	.main-nav {
 		display: flex;
@@ -590,7 +591,7 @@ body.modal-open .modal {
 	}
 
 	.canvas-container {
-		width: 60vw;
+		/* width: 60vw; */
 		height: 60vh;
 	}
 
